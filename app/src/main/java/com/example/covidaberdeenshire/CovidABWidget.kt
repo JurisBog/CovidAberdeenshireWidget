@@ -34,15 +34,17 @@ class CovidABWidget : AppWidgetProvider() {
 
                     Log.d("Web-Success", lastRecord?.getWeekly().toString());
                     val out = lastRecord?.getWeekly()?.roundToInt().toString()
+
+                    // There may be multiple widgets active, so update all of them
+                    for (appWidgetId in appWidgetIds) {
+                        updateAppWidget(context, appWidgetManager, appWidgetId, out)
+                    }
+
                 }
 
             }
         )
 
-        // There may be multiple widgets active, so update all of them
-        for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
-        }
     }
 
     override fun onEnabled(context: Context) {
@@ -57,9 +59,9 @@ class CovidABWidget : AppWidgetProvider() {
 internal fun updateAppWidget(
     context: Context,
     appWidgetManager: AppWidgetManager,
-    appWidgetId: Int
+    appWidgetId: Int,
+    widgetText: String
 ) {
-    val widgetText = context.getString(R.string.appwidget_text)
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.covid_a_b_widget)
     views.setTextViewText(R.id.appwidget_text, widgetText)
